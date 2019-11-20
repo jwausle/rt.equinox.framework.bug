@@ -49,8 +49,9 @@ Caused by: java.lang.ClassNotFoundException: javax.annotation.PostConstruct cann
 
 ## Howto reproduce?
 - I share a [github repo](https://github.com/jwausle/rt.equinox.framework.bug)
-- `run-error.sh` to raise the exception
-- `run-quickfix.sh` to show my quickfix solution
+- `run-bug1.sh` to raise the 'Unresolved requirement'
+- `run-bug2.sh` to raise the 'NoClassDefFoundError'
+- `run-expected-error.sh` to use quickfix to get correct exception
 
 ## Quickfix:
 - setup the runtime parameter `-Dorg.osgi.framework.system.packages=without,javax.annotation,package`
