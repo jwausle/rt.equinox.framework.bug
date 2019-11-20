@@ -1,11 +1,13 @@
-# Eclipse bug: rt.equinox.framework.bug
-'NoClassDefFoundError: javax/annotation/PostConstruct' while using of 'InjectorFactory.getDefault()' (java11 only)
+# Eclipse bug1: rt.equinox.framework.bug
+
+ 1. 'Unresolved requirement: Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=11))'
+ 2. 'NoClassDefFoundError: javax/annotation/PostConstruct' while using of 'InjectorFactory.getDefault()' (java11 only)
 
 ## What's happen?
 During usage of `InjectorFactory.getDefault()` raise an `NoClassDefFoundError: javax/annotation/PostConstruct` despite successful wired `javax.annotation` package at `org.eclipse.e4.core.di` - exported from `org.eclipse.osgi-3.12.100`.
 
 ## Environment?
-- java11;vendor=oracle 
+- java11;vendor=oracle
 - org.eclipse.osgi;version=3.12.100
 - org.eclipse.e4.core.di;version=1.6.100
 
@@ -45,7 +47,7 @@ Caused by: java.lang.ClassNotFoundException: javax.annotation.PostConstruct cann
 	... 19 more
 ```
 
-## Howto reproduce? 
+## Howto reproduce?
 - I share a [github repo](https://github.com/jwausle/rt.equinox.framework.bug)
 - `run-error.sh` to raise the exception
 - `run-quickfix.sh` to show my quickfix solution
@@ -54,10 +56,10 @@ Caused by: java.lang.ClassNotFoundException: javax.annotation.PostConstruct cann
 - setup the runtime parameter `-Dorg.osgi.framework.system.packages=without,javax.annotation,package`
 - to overwrite calculated system packages from [JavaSE-9.profile](https://github.com/eclipse/rt.equinox.framework/blob/master/bundles/org.eclipse.osgi/JavaSE-9.profile)
 
-## My investigations: 
+## My investigations:
 I guess `org.eclipse.osgi-3.12.100` is still not ready to run with java11
-- `org.eclipse.osgi` still export `javax.annotation` package in version "0.0.0" 
-- but this `javax.annotation` package not longer exist in java11 ([described here](https://docs.oracle.com/en/java/javase/11/migrate/index.html#JSMIG-GUID-F640FA9D-FB66-4D85-AD2B-D931174C09A3)) 
+- `org.eclipse.osgi` still export `javax.annotation` package in version "0.0.0"
+- but this `javax.annotation` package not longer exist in java11 ([described here](https://docs.oracle.com/en/java/javase/11/migrate/index.html#JSMIG-GUID-F640FA9D-FB66-4D85-AD2B-D931174C09A3))
 - it's part of removed module  `java.xml.ws.annotation`
 - and it seems that equinox wire this NOT-EXISTING-PACKAGE to bundles who import this one (e.g. 'org.eclipse.e4.core.di')
 
@@ -83,4 +85,3 @@ public class Activator implements BundleActivator {
 }
 
 ```
-
